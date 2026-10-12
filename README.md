@@ -23,19 +23,56 @@ lighting hardware on the market.
 
 | Type | Brand | Device | Status |
 | --- | --- | --- | --- |
-| Keyboard | Akko | 5075B Plus-S: per-key backlight, sidelights | ✅ Tested |
-| Keyboard | Any | VIA/QMK keyboards with RGB matrix | 🟡 Should work |
-| Motherboard / ARGB | ASUS | Aura USB controller, TUF GAMING B550-PLUS (`0b05:1939`) | ✅ Tested |
-| Motherboard / ARGB | ASUS | Other Aura USB mainboard controllers (`1867`, `1872`, `18a3`, `18a5`, `18f3`, `19af`, `1aa6`) | 🟡 Should work |
-| Mouse | Logitech | G502 (SE) HERO: lighting, DPI, polling rate, onboard mode | ✅ Tested |
-| Mouse | Logitech | Other HID++ 2.0 mice with RGB (`0x8070`) | 🟡 Should work |
+| Keyboard | Akko | 5075B Plus-S: per-key backlight, sidelights | ✅ Tested by maintainer |
+| Keyboard | Any | VIA/QMK keyboards with RGB matrix (Keychron, Glorious, KBDfans, …) | 🟡 Untested |
+| Motherboard / ARGB | ASUS | Aura USB controller, TUF GAMING B550-PLUS (`0b05:1939`) | ✅ Tested by maintainer |
+| Motherboard / ARGB | ASUS | Other Aura USB mainboard controllers (`1867`, `1872`, `18a3`, `18a5`, `18f3`, `19af`, `1aa6`) | 🟡 Untested |
+| Mouse | Logitech | G502 (SE) HERO: lighting, DPI, polling rate, onboard mode | ✅ Tested by maintainer |
+| Mouse | Logitech | Other HID++ 2.0 mice with RGB (`0x8070`) | 🟡 Untested |
 
-✅ tested on real hardware · 🟡 same protocol, not yet confirmed. If you try one,
-please [report how it went](https://github.com/vaisajuh/clcr/issues/new?template=device-report.md).
+✅ tested by maintainer · 🤝 community tested (by the named contributor) ·
+🟡 untested: same protocol as a tested device, should work. Tried one? Please
+[report how it went](https://github.com/vaisajuh/clcr/issues/new?template=device-report.md).
 
-Want your device supported? [Open a device request](https://github.com/vaisajuh/clcr/issues/new?template=device-request.md),
-or add it yourself: [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-new-device)
+**Wanted:** MSI Mystic Light, Gigabyte RGB Fusion 2 and ASRock Polychrome
+motherboards (in [caselight](https://github.com/vaisajuh/caselight#adding-a-motherboard-brand)),
+and keyboards, mice, headsets, fan hubs, GPUs and RAM from Corsair, Razer,
+SteelSeries, HyperX, NZXT, Lian Li and others.
+[Open a device request](https://github.com/vaisajuh/clcr/issues/new?template=device-request.md),
+or add support yourself: [CONTRIBUTING.md](CONTRIBUTING.md#adding-a-new-device)
 explains how.
+
+## How device support works
+
+clcr is maintained by one person, who can only test the hardware on their own
+desk. Support for everything else comes from the people who own it:
+
+1. **You write the driver and test it on your hardware.** Use `clcr --demo`
+   and the tests while developing, and your own device to confirm it works.
+2. **You open a pull request with a hardware test report.** The pull request
+   template asks for the model, the USB ID, what works and what doesn't.
+3. **The maintainer reviews the code, not the hardware.** The review checks
+   that the code is readable, talks only to its own device, uses only the
+   Python standard library and comes with an emulated device and tests. The
+   maintainer can't test your device, so the merge relies on your report.
+4. **You become the driver's maintainer.** You're listed below, the device
+   is marked 🤝 community tested with your name, and you're asked to review
+   future changes to your driver.
+
+If a driver breaks and nobody with the hardware can fix it, it is marked
+unmaintained and may be removed in a later release.
+
+| Driver | Code | Maintainer |
+| --- | --- | --- |
+| VIA keyboards | [viactl](https://github.com/vaisajuh/viactl) → `clcr/backends/via/` | [@vaisajuh](https://github.com/vaisajuh) |
+| ASUS Aura | [caselight](https://github.com/vaisajuh/caselight) → `clcr/backends/aura/` | [@vaisajuh](https://github.com/vaisajuh) |
+| Logitech HID++ | [logiled](https://github.com/vaisajuh/logiled) → `clcr/backends/logitech/` | [@vaisajuh](https://github.com/vaisajuh) |
+
+> **Use at your own risk.** clcr is provided as is, without warranty (see
+> [LICENSE](LICENSE)). Drivers avoid commands that change firmware or
+> settings permanently, and community drivers are reviewed but not tested by
+> the maintainer. A bug in a driver or in a device's firmware can still leave
+> a device in an odd state.
 
 ## Setup
 
@@ -75,13 +112,15 @@ also has its own tab with everything it supports.
 - Settings live in `~/.config/clcr/` (`config.json`, and `caselight.json` for
   ARGB LED counts and the last case lighting).
 - The keyboard must be connected by USB cable in wired mode.
+- The udev rule covers Akko keyboards. For another VIA keyboard, add a line
+  with its USB vendor ID to `clcr/data/70-clcr.rules` and run `./install.sh` again.
 
 ## How it's built
 
 ```
  tkinter main thread             one worker thread per device         hardware (hidraw)
  ┌────────────────┐   submit()   ┌──────────────────────┐            ┌──────────────┐
- │ Overview tab   │ ───────────▶ │ DeviceWorker          │ ─────────▶ │ Akko keyboard│
+ │ Overview tab   │ ───────────▶ │ DeviceWorker          │ ─────────▶ │ VIA keyboard │
  │ Keyboard tab   │              │  job queue,           │            │ ASUS Aura    │
  │ Case tab       │ ◀─────────── │  stale jobs dropped   │ ◀───────── │ G502 mouse   │
  │ Mouse tab      │   post()     └──────────────────────┘            └──────────────┘
@@ -91,8 +130,8 @@ also has its own tab with everything it supports.
 - **No dependencies.** Everything is the Python 3 standard library plus
   tkinter. The device drivers in `clcr/backends/` read and write
   `/dev/hidrawN` directly, so no libusb, hidapi or daemon is needed.
-- **Drivers come from the single-device projects.** `backends/akko` is
-  `via.py` and `fake.py` from [akkoctl](https://github.com/vaisajuh/akkoctl),
+- **Drivers come from the single-device projects.** `backends/via` is
+  `via.py` and `fake.py` from [viactl](https://github.com/vaisajuh/viactl),
   `backends/aura` is `aura.py`, `core.py`, `effects.py` and `config.py` from
   [caselight](https://github.com/vaisajuh/caselight), and `backends/logitech` is
   `hidpp.py` and `device.py` from [logiled](https://github.com/vaisajuh/logiled).
@@ -138,8 +177,8 @@ Contributions are very welcome: bug reports, device test reports, new
 device support and code.
 
 - **Report a bug or request a device:** [open an issue](https://github.com/vaisajuh/clcr/issues/new/choose).
-- **Change the keyboard, case or mouse driver:** open a pull request in
-  [akkoctl](https://github.com/vaisajuh/akkoctl),
+- **Change the keyboard, motherboard or mouse driver:** open a pull request in
+  [viactl](https://github.com/vaisajuh/viactl),
   [caselight](https://github.com/vaisajuh/caselight) or
   [logiled](https://github.com/vaisajuh/logiled). Merged changes reach clcr
   automatically.
@@ -167,8 +206,8 @@ Questions, ideas and bug reports are welcome as
 Part of a small set of Linux lighting tools, all pure Python with no third-party dependencies:
 
 - **clcr** (this repo): Computer Lighting Control Center, one desktop app for lighting across brands and devices (bundles the drivers below)
-- [akkoctl](https://github.com/vaisajuh/akkoctl): Akko 5075B Plus-S keyboard: RGB backlight, sidelights, keymap and macros
-- [caselight](https://github.com/vaisajuh/caselight): ASUS Aura USB controller: motherboard and ARGB header lighting
+- [viactl](https://github.com/vaisajuh/viactl): VIA/QMK keyboards (tested on Akko 5075B Plus-S): RGB backlight, sidelights, keymap and macros
+- [caselight](https://github.com/vaisajuh/caselight): motherboard and case lighting (currently ASUS Aura)
 - [logiled](https://github.com/vaisajuh/logiled): Logitech G502 HERO mouse: lighting, DPI, polling rate and onboard mode
 
 ## Acknowledgements

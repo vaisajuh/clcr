@@ -11,10 +11,10 @@ aura_config.CONFIG_PATH = CONFIG_PATH.with_name("caselight.json")
 
 def open_keyboard(demo=False):
     """Return (VIA Keyboard, display name)."""
-    from .backends.akko import via
+    from .backends.via import via
 
     if demo:
-        from .backends.akko.fake import fake_keyboard
+        from .backends.via.fake import fake_keyboard
 
         return fake_keyboard(), "Akko 5075B Plus-S (demo)"
     found = via.find_devices()
