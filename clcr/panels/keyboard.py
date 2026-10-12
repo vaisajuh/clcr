@@ -1,4 +1,4 @@
-"""Akko keyboard tab: key backlight and sidelights ."""
+"""Keyboard tab: key backlight and sidelights of VIA keyboards."""
 
 from tkinter import ttk
 
@@ -23,7 +23,7 @@ class KeyboardPanel(DevicePanel):
         return devices.open_keyboard(self.app.demo)
 
     def read_initial(self, kb):
-        from ..backends.akko import via
+        from ..backends.via import via
 
         state = {}
         for zone in ("keys", "side"):
@@ -59,7 +59,7 @@ class KeyboardPanel(DevicePanel):
 
 class ZoneEditor(ttk.LabelFrame):
     def __init__(self, parent, panel, zone, label, state):
-        from ..backends.akko import via
+        from ..backends.via import via
 
         super().__init__(parent, text=f"  {label}  ", padding=(16, 10))
         self.via = via

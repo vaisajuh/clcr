@@ -1,4 +1,4 @@
-# Nightly: copy newer driver files from akkoctl, caselight and logiled into
+# Nightly: copy newer driver files from viactl, caselight and logiled into
 # clcr/backends/ and open (or update) a pull request with the changes.
 # Run it right away from the Actions tab with "Run workflow".
 name: Sync bundled drivers

@@ -6,7 +6,7 @@ from ..theme import STATUS_COLORS
 from ..widgets import ColorButton
 
 DESCRIPTIONS = {
-    "Keyboard": "Akko per-key backlight and sidelights",
+    "Keyboard": "VIA keyboards: per-key backlight and sidelights",
     "Case lighting": "ASUS Aura motherboard and ARGB headers",
     "Mouse": "Logitech G502 lighting, DPI and polling rate",
 }

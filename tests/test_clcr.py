@@ -43,7 +43,7 @@ class WorkerTests(unittest.TestCase):
 
 class DemoDeviceTests(unittest.TestCase):
     def test_demo_keyboard(self):
-        from clcr.backends.akko import via
+        from clcr.backends.via import via
 
         kb, name = devices.open_keyboard(demo=True)
         self.assertIn("demo", name)

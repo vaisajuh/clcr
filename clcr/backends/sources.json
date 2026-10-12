@@ -1,11 +1,11 @@
 {
-  "akko": {
-    "repo": "vaisajuh/akkoctl",
+  "via": {
+    "repo": "vaisajuh/viactl",
     "branch": "main",
-    "commit": "e04784bc9dc0999727950ea1ad19fd8dc4fb725b",
+    "commit": "23d47d2a4bc9d5b6889462d1d43835f0d2413cae",
     "files": {
-      "akkoctl/via.py": "clcr/backends/akko/via.py",
-      "akkoctl/fake.py": "clcr/backends/akko/fake.py"
+      "viactl/via.py": "clcr/backends/via/via.py",
+      "viactl/fake.py": "clcr/backends/via/fake.py"
     }
   },
   "aura": {

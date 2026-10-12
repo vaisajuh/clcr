@@ -4,6 +4,10 @@ Thanks for helping! clcr's goal is to support as much lighting hardware as
 possible, and that only works with people who own the hardware. Every
 contribution counts, from a one-line test report to a new driver.
 
+The maintainer can only test the devices on their own desk. Support for
+everything else is written and tested by contributors, and merged based on
+their test report; see [How device support works](README.md#how-device-support-works).
+
 ## Ways to help
 
 - **Test a device.** Tried clcr with a device marked 🟡 in the README, or
@@ -20,20 +24,20 @@ their own projects, and clcr carries copies of them in `clcr/backends/`.
 
 | You want to change… | Open the pull request in |
 | --- | --- |
-| The Akko / VIA keyboard driver (`clcr/backends/akko/`) | [vaisajuh/akkoctl](https://github.com/vaisajuh/akkoctl) |
-| The ASUS Aura driver (`clcr/backends/aura/`) | [vaisajuh/caselight](https://github.com/vaisajuh/caselight) |
+| The VIA keyboard driver (`clcr/backends/via/`) | [vaisajuh/viactl](https://github.com/vaisajuh/viactl) |
+| The ASUS Aura driver (`clcr/backends/aura/`), or a new motherboard brand | [vaisajuh/caselight](https://github.com/vaisajuh/caselight) |
 | The Logitech HID++ driver (`clcr/backends/logitech/`) | [vaisajuh/logiled](https://github.com/vaisajuh/logiled) |
 | The app: GUI, tabs, settings, install, a new device | [vaisajuh/clcr](https://github.com/vaisajuh/clcr) (here) |
 
-Never edit the files in `clcr/backends/akko/`, `aura/` or `logitech/` in
+Never edit the files in `clcr/backends/via/`, `aura/` or `logitech/` in
 clcr directly. A CI check fails if they differ from upstream, and the next
 sync would overwrite the edit anyway.
 
 ## How changes flow between the repos
 
 ```
- PR in akkoctl ──▶ merged ──▶ nightly sync in clcr ──▶ PR in clcr ──▶ merged
- (akkoctl's tests)            (copies changed files,     (review it)
+ PR in viactl ──▶ merged ──▶ nightly sync in clcr ──▶ PR in clcr ──▶ merged
+ (viactl's tests)            (copies changed files,     (review it)
                                runs clcr's tests)
 ```
 
@@ -80,13 +84,13 @@ A device needs a **driver** (talks to the hardware) and a **tab** (the GUI).
 ### 1. The driver
 
 - Put it in `clcr/backends/<family>/`, e.g. `backends/corsair/`. It can
-  also start as its own repo, like akkoctl; then add it to
+  also start as its own repo, like viactl; then add it to
   `clcr/backends/sources.json` so it is synced the same way.
 - Use only the Python standard library. Talk to the device through
-  `/dev/hidraw*`; see `backends/akko/via.py` for how to find a device in
+  `/dev/hidraw*`; see `backends/via/via.py` for how to find a device in
   sysfs by its USB IDs or HID report descriptor.
 - Include an **emulated device**, a class with the same methods that keeps
-  state in memory (see `backends/akko/fake.py` and `FakeMouse` in
+  state in memory (see `backends/via/fake.py` and `FakeMouse` in
   `devices.py`). The tests and `clcr --demo` use it.
 - Raise exceptions with messages a user can act on ("Permission denied,
   run install.sh"), not raw error codes.
@@ -113,6 +117,31 @@ A device needs a **driver** (talks to the hardware) and a **tab** (the GUI).
 - Add tests for the protocol encoding and the emulated device to `tests/`.
 - Add the device to the **Supported devices** table in the README.
 
+## Getting a driver merged
+
+The maintainer reviews the code but can't test your hardware, so a new or
+changed driver needs:
+
+1. **A hardware test report** in the pull request: exact model, USB ID,
+   Linux distribution, what works and what doesn't. A short video or photo
+   of the lights changing helps. The pull request template has the fields.
+2. **An emulated device and tests**, so CI checks the code even without the
+   hardware, and so `clcr --demo` shows the tab.
+3. **Readable code that only does its job.** A lighting driver reads and
+   writes its own `/dev/hidraw*` device and nothing else: no network access,
+   no running other programs, no files outside its settings. Reviewers
+   check this line by line.
+4. **No permanent changes without explanation.** Firmware updates are out
+   of scope. Commands that store settings permanently on the device must be
+   documented in the code and debounced in the GUI.
+5. **Someone to look after it.** After the merge you're listed as the
+   driver's maintainer in the README, the device is marked 🤝 community
+   tested with your name, and you'll be asked to review future changes to
+   your driver. Can't keep doing that? Say so in an issue, no problem.
+
+A driver that breaks, with nobody left who has the hardware to fix it, is
+marked unmaintained and may be removed in a later release.
+
 ## Ground rules
 
 - **No third-party dependencies.** Standard library and tkinter only.
@@ -132,8 +161,11 @@ A device needs a **driver** (talks to the hardware) and a **tab** (the GUI).
 
 ## Pull request checklist
 
+The [pull request template](.github/pull_request_template.md) has the full
+checklist. In short:
+
 - [ ] Tests pass: `python3 -m unittest discover -s tests`
-- [ ] Tried in `clcr --demo`, and on real hardware if you have it (say which)
+- [ ] Tried in `clcr --demo`, and on real hardware (hardware test report filled in)
 - [ ] README updated if devices or behavior changed
 - [ ] Driver changes made upstream, not in `clcr/backends/` (see above)
 
