@@ -1,11 +1,11 @@
-# Nightly: copy newer driver files from viactl, caselight and logiled into
+# Weekly: copy newer driver files from viactl, caselight and logiled into
 # clcr/backends/ and open (or update) a pull request with the changes.
 # Run it right away from the Actions tab with "Run workflow".
 name: Sync bundled drivers
 
 on:
   schedule:
-    - cron: "0 3 * * *"   # 03:00 UTC every day
+    - cron: "0 3 * * 1"   # Mondays 03:00 UTC
   workflow_dispatch:
 
 permissions:
