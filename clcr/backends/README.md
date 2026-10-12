@@ -12,9 +12,8 @@ upstream commit they came from:
 
 To change one of them, open a pull request in the upstream repo. After it is
 merged, the weekly **Sync bundled drivers** workflow (Mondays, or run it from
-the Actions tab) copies the change here
-and opens a pull request in clcr. A CI check fails if these copies are edited
-in clcr directly.
+the Actions tab) copies the change here and opens a pull request in clcr. A CI
+check fails if these copies are edited in clcr directly.
 
 New brands can live in their own folder here without an upstream repo. Only
 folders listed in `sources.json` are synced.
