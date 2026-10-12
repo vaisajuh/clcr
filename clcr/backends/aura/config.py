@@ -1,16 +1,16 @@
-"""Persistent settings in ~/.config/clcr/caselight.json."""
+"""Persistent settings in ~/.config/caselight/config.json."""
 
 import json
 import os
 from pathlib import Path
 
-CONFIG_PATH = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "clcr" / "caselight.json"
+CONFIG_PATH = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "caselight" / "config.json"
 
 DEFAULTS = {
     # LEDs on each ARGB header, keyed by header number ("1", "2", ...).
     # The controller can't detect this; set it to match your fans/strips.
     "argb_leds": {},
-    # Last applied lighting, resumed by the control center.
+    # Last applied lighting, restored by `caselight restore` and the web UI.
     "last": {"kind": "hardware", "mode": "static", "color": "#ff0000", "zones": ["all"],
              "speed": 1.0, "brightness": 1.0},
 }

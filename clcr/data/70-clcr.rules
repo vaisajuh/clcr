@@ -1,4 +1,4 @@
-# Lighting Control Center: let the logged-in user access the lighting
+# Computer Lighting Control Center: let the logged-in user access the lighting
 # controllers' hidraw interfaces without root. Must sort before
 # 73-seat-late.rules for TAG+="uaccess" to take effect.
 

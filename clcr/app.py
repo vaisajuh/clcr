@@ -27,7 +27,7 @@ class App:
         self._ui = queue.Queue()
         self.overview = None
 
-        root.title("Lighting Control Center" + (" (demo)" if demo else ""))
+        root.title("Computer Lighting Control Center" + (" (demo)" if demo else ""))
         root.geometry("960x600")
         root.minsize(820, 520)
         theme.apply(root)

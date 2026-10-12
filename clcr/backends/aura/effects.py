@@ -1,7 +1,7 @@
 """Software effects rendered on the PC and streamed to the controller in direct mode.
 
 Unlike the built-in hardware modes, these give per-LED control (true rainbow waves,
-comets, etc.) but need the app to keep running.
+comets, etc.) but need caselight to keep running.
 """
 
 import colorsys

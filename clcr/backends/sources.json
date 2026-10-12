@@ -1,0 +1,31 @@
+{
+  "akko": {
+    "repo": "vaisajuh/akkoctl",
+    "branch": "main",
+    "commit": "e04784bc9dc0999727950ea1ad19fd8dc4fb725b",
+    "files": {
+      "akkoctl/via.py": "clcr/backends/akko/via.py",
+      "akkoctl/fake.py": "clcr/backends/akko/fake.py"
+    }
+  },
+  "aura": {
+    "repo": "vaisajuh/caselight",
+    "branch": "main",
+    "commit": "2172d0e41ba10f94253d08b0c36db51638d3fc0e",
+    "files": {
+      "caselight/aura.py": "clcr/backends/aura/aura.py",
+      "caselight/core.py": "clcr/backends/aura/core.py",
+      "caselight/effects.py": "clcr/backends/aura/effects.py",
+      "caselight/config.py": "clcr/backends/aura/config.py"
+    }
+  },
+  "logitech": {
+    "repo": "vaisajuh/logiled",
+    "branch": "main",
+    "commit": "5fbf973cebb8f9dc4422c73b61cbff00154e0b26",
+    "files": {
+      "logiled/hidpp.py": "clcr/backends/logitech/hidpp.py",
+      "logiled/device.py": "clcr/backends/logitech/device.py"
+    }
+  }
+}
