@@ -11,7 +11,8 @@ upstream commit they came from:
 | `logitech/` | [vaisajuh/logiled](https://github.com/vaisajuh/logiled) |
 
 To change one of them, open a pull request in the upstream repo. After it is
-merged, the nightly **Sync bundled drivers** workflow copies the change here
+merged, the weekly **Sync bundled drivers** workflow (Mondays, or run it from
+the Actions tab) copies the change here
 and opens a pull request in clcr. A CI check fails if these copies are edited
 in clcr directly.
 

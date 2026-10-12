@@ -36,21 +36,21 @@ sync would overwrite the edit anyway.
 ## How changes flow between the repos
 
 ```
- PR in viactl ──▶ merged ──▶ nightly sync in clcr ──▶ PR in clcr ──▶ merged
+ PR in viactl ──▶ merged ──▶ weekly sync in clcr ──▶ PR in clcr ──▶ merged
  (viactl's tests)            (copies changed files,     (review it)
                                runs clcr's tests)
 ```
 
 1. Open a pull request in the driver repo. Its tests run on the PR.
 2. The maintainer merges it.
-3. Every night at 03:00 UTC, clcr's **Sync bundled drivers** workflow
+3. Every Monday at 03:00 UTC, clcr's **Sync bundled drivers** workflow
    compares `clcr/backends/` with the latest upstream code. If a copied file
    changed, it copies it, runs clcr's tests and opens a pull request titled
    "Update bundled drivers: …". The PR lists the upstream commits and the
    test result. If one is already open, it is updated instead.
 4. The maintainer reviews and merges that PR.
 
-To sync right away instead of waiting for the night, go to clcr's
+To sync right away instead of waiting for Monday, go to clcr's
 **Actions → Sync bundled drivers → Run workflow**.
 
 If the sync PR says tests failed, the upstream change broke something in

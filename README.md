@@ -136,7 +136,7 @@ also has its own tab with everything it supports.
   [caselight](https://github.com/vaisajuh/caselight), and `backends/logitech` is
   `hidpp.py` and `device.py` from [logiled](https://github.com/vaisajuh/logiled).
   They are copied in, not imported, so clcr installs and runs on its own.
-  A nightly workflow keeps the copies up to date (see
+  A weekly workflow keeps the copies up to date (see
   [Contributing](CONTRIBUTING.md#how-changes-flow-between-the-repos)).
   Protocol details are explained in those repos' READMEs.
 - **The GUI never waits for USB.** Tk may only be used from the main thread,
