@@ -19,8 +19,8 @@ class OverviewPanel(ttk.Frame):
         self.panels = panels
         self.cards = {}
 
-        ttk.Label(self, text="Lighting Control Center", style="Title.TLabel").pack(anchor="w")
-        ttk.Label(self, text="All your lighting in one place.", style="Muted.TLabel").pack(
+        ttk.Label(self, text="Computer Lighting Control Center", style="Title.TLabel").pack(anchor="w")
+        ttk.Label(self, text="All your computer lighting in one place.", style="Muted.TLabel").pack(
             anchor="w", pady=(2, 16))
 
         cards = ttk.Frame(self)

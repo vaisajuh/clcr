@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=Lighting Control Center
-Comment=Keyboard, case and mouse lighting in one place
+Name=Computer Lighting Control Center
+Comment=RGB lighting for keyboards, mice and cases in one place
 Exec=clcr
 Icon=preferences-desktop-color
 Terminal=false

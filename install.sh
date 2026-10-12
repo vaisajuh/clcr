@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs the Lighting Control Center for the current user:
+# Installs the Computer Lighting Control Center for the current user:
 # tkinter (if missing), the udev rule for device access, the `clcr` command
 # and an app-menu entry. Asks for sudo for the system parts.
 set -euo pipefail
@@ -36,5 +36,5 @@ mkdir -p ~/.local/share/applications
 install -m 644 clcr/data/clcr.desktop ~/.local/share/applications/clcr.desktop
 
 echo
-echo "Done. Run 'clcr' or open \"Lighting Control Center\" from the app menu."
+echo "Done. Run 'clcr' or open \"Computer Lighting Control Center\" from the app menu."
 echo "Replug the keyboard and mouse if they aren't found the first time."

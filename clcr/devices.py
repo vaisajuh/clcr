@@ -1,4 +1,11 @@
-"""Opens the three controllers, or emulated ones for --demo."""
+"""Opens the device drivers in clcr/backends/, or emulated devices for --demo."""
+
+from .backends.aura import config as aura_config
+from .settings import CONFIG_PATH
+
+# The bundled caselight driver keeps its settings next to clcr's own instead
+# of in ~/.config/caselight/. Set here so backends/ stays identical to upstream.
+aura_config.CONFIG_PATH = CONFIG_PATH.with_name("caselight.json")
 
 
 
