@@ -1,0 +1,10 @@
+# Lighting Control Center: let the logged-in user access the lighting
+# controllers' hidraw interfaces without root. Must sort before
+# 73-seat-late.rules for TAG+="uaccess" to take effect.
+
+# Akko / VIA keyboards
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="342d", MODE="0660", TAG+="uaccess"
+# ASUS Aura USB mainboard LED controllers
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0b05", ATTRS{idProduct}=="1867|1872|18a3|18a5|18f3|1939|19af|1aa6", TAG+="uaccess"
+# Logitech HID++ devices
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", TAG+="uaccess"

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Lighting Control Center
+Comment=Keyboard, case and mouse lighting in one place
+Exec=clcr
+Icon=preferences-desktop-color
+Terminal=false
+Categories=Settings;HardwareSettings;

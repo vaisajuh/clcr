@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clcr"
+version = "0.1.0"
+description = "Lighting Control Center: keyboard, case and mouse lighting in one desktop app"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = []   # stdlib only; the GUI needs tkinter (Debian/Ubuntu: python3-tk)
+
+[project.scripts]
+clcr = "clcr.app:main"
+
+[tool.setuptools.packages.find]
+include = ["clcr*"]
+
+[tool.setuptools.package-data]
+clcr = ["data/*"]
