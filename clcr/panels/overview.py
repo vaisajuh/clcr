@@ -2,8 +2,9 @@
 
 from tkinter import ttk
 
+from .. import theme
 from ..theme import STATUS_COLORS
-from ..widgets import ColorButton
+from ..widgets import ColorButton, WrapLabel
 
 DESCRIPTIONS = {
     "Keyboard": "VIA keyboards: per-key backlight and sidelights",
@@ -25,20 +26,27 @@ class OverviewPanel(ttk.Frame):
 
         cards = ttk.Frame(self)
         cards.pack(fill="x")
-        for col, panel in enumerate(panels):
+        for i, panel in enumerate(panels):
+            # Cards sit in even columns; the odd ones are fixed gaps, so all cards get
+            # the same width.
+            col = 2 * i
+            if i:
+                cards.columnconfigure(col - 1, minsize=12)
             card = ttk.Frame(cards, style="Card.TFrame", padding=16)
-            card.grid(row=0, column=col, sticky="nsew", padx=(0 if col == 0 else 12, 0))
+            card.grid(row=0, column=col, sticky="nsew")
             cards.columnconfigure(col, weight=1, uniform="cards")
             ttk.Label(card, text=panel.title, style="CardTitle.TLabel").pack(anchor="w")
-            ttk.Label(card, text=DESCRIPTIONS.get(panel.title, ""), style="CardMuted.TLabel",
-                      wraplength=200, justify="left").pack(anchor="w", pady=(2, 10))
-            status = ttk.Label(card, style="CardOff.TLabel", wraplength=200, justify="left")
-            status.pack(anchor="w")
+            # Packed before the text so it stays at the bottom, lined up across cards.
             ttk.Button(card, text="Open", command=lambda p=panel: app.show(p)).pack(
-                anchor="w", pady=(12, 0))
+                side="bottom", anchor="w", pady=(12, 0))
+            WrapLabel(card, text=DESCRIPTIONS.get(panel.title, ""), style="CardMuted.TLabel").pack(
+                fill="x", pady=(2, 10))
+            status = WrapLabel(card, style="CardOff.TLabel")
+            status.pack(fill="x")
             self.cards[panel] = status
 
-        sync = ttk.LabelFrame(self, text="  Sync all devices  ", padding=(16, 12))
+        sync = ttk.LabelFrame(self, text="Sync all devices", style="Card.TLabelframe",
+                              padding=(16, 8, 16, 16))
         sync.pack(fill="x", pady=(20, 0))
         ttk.Label(sync, text="Color").grid(row=0, column=0, sticky="w", padx=(0, 12))
         self.color = ColorButton(sync, app.settings.get("sync_color", "#ff0000"),
@@ -52,6 +60,7 @@ class OverviewPanel(ttk.Frame):
             "Sets every connected device to a static color. Fine-tune each device "
             "on its own tab.")).grid(row=1, column=0, columnspan=4, sticky="w", pady=(10, 0))
 
+        theme.restyle_cards(self)
         for panel in panels:
             self.update_card(panel)
 

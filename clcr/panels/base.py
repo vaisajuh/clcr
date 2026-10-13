@@ -2,6 +2,7 @@
 
 from tkinter import ttk
 
+from .. import theme
 from ..worker import DeviceWorker
 
 
@@ -95,6 +96,7 @@ class DevicePanel(ttk.Frame):
         self._clear_body()
         try:
             self.build(self.body, info)
+            theme.restyle_cards(self.body)
         except Exception as e:
             self._on_open_failed(RuntimeError(f"Could not build the controls: {e!r}"))
             raise

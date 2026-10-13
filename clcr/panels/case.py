@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .. import devices
-from ..widgets import ColorButton, Debouncer, ValueScale, form_row
+from ..widgets import ChoiceBox, ColorButton, Debouncer, ValueScale, WrapLabel, form_row
 from .base import DevicePanel
 
 APPLY_DELAY_MS = 200
@@ -65,9 +65,11 @@ class CasePanel(DevicePanel):
         last = self.cfg["last"]
         self._loading = True
 
-        left = ttk.LabelFrame(body, text="  Lighting  ", padding=(16, 10))
+        left = ttk.LabelFrame(body, text="Lighting", style="Card.TLabelframe",
+                              padding=(16, 8, 16, 16))
         left.grid(row=0, column=0, sticky="nsew")
-        right = ttk.LabelFrame(body, text="  Zones  ", padding=(16, 10))
+        right = ttk.LabelFrame(body, text="Zones", style="Card.TLabelframe",
+                               padding=(16, 8, 16, 16))
         right.grid(row=0, column=1, sticky="nsew", padx=(16, 0))
         body.columnconfigure(0, weight=3)
         body.columnconfigure(1, weight=2)
@@ -80,7 +82,7 @@ class CasePanel(DevicePanel):
                         command=self._kind_changed).pack(side="left", padx=(16, 0))
         form_row(left, 0, "Type", kinds, sticky="w")
 
-        self.mode = ttk.Combobox(left, state="readonly", height=16)
+        self.mode = ChoiceBox(left, height=16)
         self.mode.bind("<<ComboboxSelected>>", self._changed)
         form_row(left, 1, "Mode", self.mode)
         self.color = ColorButton(left, last.get("color", "#ff0000"), self._changed,
@@ -92,8 +94,8 @@ class CasePanel(DevicePanel):
         self.speed = ValueScale(left, 0.1, 5, float(last.get("speed", 1.0)),
                                 lambda v: f"{v:.1f}×", self._changed, 0.1)
         self.speed_label = form_row(left, 4, "Speed", self.speed)
-        self.note = ttk.Label(left, style="Small.TLabel", wraplength=380, justify="left")
-        self.note.grid(row=5, column=0, columnspan=2, sticky="w", pady=(8, 0))
+        self.note = WrapLabel(left, style="Small.TLabel")
+        self.note.grid(row=5, column=0, columnspan=2, sticky="ew", pady=(8, 0))
         btns = ttk.Frame(left)
         btns.grid(row=6, column=0, columnspan=2, sticky="w", pady=(10, 0))
         ttk.Button(btns, text="Turn off", command=self.set_off).pack(side="left")
@@ -117,10 +119,10 @@ class CasePanel(DevicePanel):
                 spin.grid(row=i, column=1, sticky="e", padx=(12, 4))
                 ttk.Label(right, text="LEDs", style="Muted.TLabel").grid(row=i, column=2, sticky="w")
                 self.led_spins[z.name] = spin
-        ttk.Label(right, style="Small.TLabel", wraplength=260, justify="left", text=(
+        WrapLabel(right, style="Small.TLabel", text=(
             "The controller can't detect how many LEDs are on each ARGB header. "
             "Set the count to match your fans/strips; software effects skip headers "
-            "with 0 LEDs.")).grid(row=len(zones), column=0, columnspan=3, sticky="w", pady=(12, 0))
+            "with 0 LEDs.")).grid(row=len(zones), column=0, columnspan=3, sticky="ew", pady=(12, 0))
         right.columnconfigure(0, weight=1)
 
         self._fill_modes(last.get("mode"))
@@ -131,7 +133,7 @@ class CasePanel(DevicePanel):
     def _fill_modes(self, current=None):
         software = self.kind.get() == "software"
         names = self.software_effects if software else self.hardware_modes
-        self.mode.configure(values=names)
+        self.mode.set_choices(names)
         self.mode.set(current if current in names else ("rainbow-wave" if software else "static"))
         self.speed.set_enabled(software)
         self.note.configure(text=(

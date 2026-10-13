@@ -83,7 +83,7 @@ class ValueScale(ttk.Frame):
         self._fmt, self._command, self._res = fmt, command, resolution
         self.var = tk.DoubleVar(value=value)
         self.scale = ttk.Scale(self, from_=from_, to=to, variable=self.var,
-                               command=self._moved, length=220)
+                               command=self._moved, length=120)
         self.label = ttk.Label(self, width=9, anchor="e", style="Muted.TLabel")
         self.scale.pack(side="left", fill="x", expand=True)
         self.label.pack(side="left", padx=(8, 0))
@@ -108,6 +108,45 @@ class ValueScale(ttk.Frame):
 
     def _update_label(self):
         self.label.configure(text=self._fmt(self.get()))
+
+
+def pretty(name: str) -> str:
+    """'rainbow-wave' -> 'Rainbow Wave'."""
+    return name.replace("-", " ").replace("_", " ").title()
+
+
+class ChoiceBox(ttk.Combobox):
+    """A read-only combobox that shows pretty labels but gets/sets raw values."""
+
+    def __init__(self, parent, values=(), label=pretty, **kw):
+        super().__init__(parent, state="readonly", **kw)
+        self._label = label
+        self.set_choices(values)
+
+    def set_choices(self, values):
+        self.choices = list(values)
+        self.configure(values=[self._label(v) for v in self.choices])
+
+    def get(self):
+        i = self.current()
+        return self.choices[i] if i >= 0 else ""
+
+    def set(self, value):
+        if value in self.choices:
+            self.current(self.choices.index(value))
+        else:
+            super().set("")
+
+
+class WrapLabel(ttk.Label):
+    """A label whose text wraps to whatever width it is given."""
+
+    def __init__(self, parent, **kw):
+        # A tiny requested width, so the label takes its width from the layout instead of
+        # holding on to the width it last wrapped at.
+        super().__init__(parent, justify="left", wraplength=200, width=1, **kw)
+        # The label's border and padding take 2 px on each side of the text.
+        self.bind("<Configure>", lambda e: self.configure(wraplength=max(e.width - 4, 50)))
 
 
 def percent_of_255(v):
