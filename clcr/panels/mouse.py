@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .. import devices
-from ..widgets import ColorButton, Debouncer, ValueScale, form_row, rgb_to_hex
+from ..widgets import ChoiceBox, ColorButton, Debouncer, ValueScale, WrapLabel, form_row, rgb_to_hex
 from .base import DevicePanel
 
 APPLY_DELAY_MS = 300
@@ -50,9 +50,11 @@ class MousePanel(DevicePanel):
         self.zones = info["zones"]
         st = self.app.settings["mouse"]
 
-        light = ttk.LabelFrame(body, text="  Lighting  ", padding=(16, 10))
+        light = ttk.LabelFrame(body, text="Lighting", style="Card.TLabelframe",
+                               padding=(16, 8, 16, 16))
         light.grid(row=0, column=0, sticky="nsew")
-        perf = ttk.LabelFrame(body, text="  Performance  ", padding=(16, 10))
+        perf = ttk.LabelFrame(body, text="Performance", style="Card.TLabelframe",
+                              padding=(16, 8, 16, 16))
         perf.grid(row=0, column=1, sticky="nsew", padx=(16, 0))
         body.columnconfigure(0, weight=3)
         body.columnconfigure(1, weight=2)
@@ -62,12 +64,11 @@ class MousePanel(DevicePanel):
             ttk.Label(light, text="This mouse has no controllable lighting.",
                       style="Muted.TLabel").grid(row=0, column=0)
         else:
-            self.zone = ttk.Combobox(light, state="readonly",
-                                     values=["all"] + [z.name for z in self.zones])
-            self.zone.set(st["zone"] if st["zone"] in self.zone["values"] else "all")
+            self.zone = ChoiceBox(light, ["all"] + [z.name for z in self.zones])
+            self.zone.set(st["zone"] if st["zone"] in self.zone.choices else "all")
             self.zone.bind("<<ComboboxSelected>>", self._zone_changed)
             form_row(light, 0, "Zone", self.zone)
-            self.effect = ttk.Combobox(light, state="readonly")
+            self.effect = ChoiceBox(light)
             self.effect.bind("<<ComboboxSelected>>", self._effect_changed)
             form_row(light, 1, "Effect", self.effect)
             self.color = ColorButton(light, st["color"], self._changed, title="Mouse color")
@@ -111,15 +112,15 @@ class MousePanel(DevicePanel):
             form_row(perf, row, "Polling rate", self.rate, sticky="w")
             row += 1
         if info["mode"] is not None:
-            self.mode = ttk.Combobox(perf, state="readonly", width=10, values=["onboard", "host"])
+            self.mode = ChoiceBox(perf, ["onboard", "host"], width=10)
             self.mode.set(info["mode"])
             self.mode.bind("<<ComboboxSelected>>", self._apply_mode)
             form_row(perf, row, "Mode", self.mode, sticky="w")
             row += 1
-            ttk.Label(perf, style="Small.TLabel", wraplength=260, justify="left", text=(
+            WrapLabel(perf, style="Small.TLabel", text=(
                 "Onboard: the mouse uses its stored profiles, which may override DPI and "
                 "rate. Host: this app is in control until the mouse is unplugged.")).grid(
-                row=row, column=0, columnspan=2, sticky="w", pady=(8, 0))
+                row=row, column=0, columnspan=2, sticky="ew", pady=(8, 0))
             row += 1
         if row == 0:
             ttk.Label(perf, text="No adjustable settings found.", style="Muted.TLabel").grid()
@@ -135,7 +136,7 @@ class MousePanel(DevicePanel):
 
         zones = self._selected_zones()
         names = [e for e in EFFECT_PARAMS if all(e in z.effects for z in zones)]
-        self.effect.configure(values=names)
+        self.effect.set_choices(names)
         current = current or self.effect.get()
         self.effect.set(current if current in names else (names[0] if names else ""))
         self._show_params()

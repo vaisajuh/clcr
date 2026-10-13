@@ -3,7 +3,8 @@
 from tkinter import ttk
 
 from .. import devices
-from ..widgets import ColorButton, Debouncer, ValueScale, form_row, percent_of_255, rgb_to_hex
+from ..widgets import (ColorButton, Debouncer, ValueScale, WrapLabel, form_row, percent_of_255,
+                       rgb_to_hex)
 from .base import DevicePanel
 
 APPLY_DELAY_MS = 120
@@ -61,7 +62,7 @@ class ZoneEditor(ttk.LabelFrame):
     def __init__(self, parent, panel, zone, label, state):
         from ..backends.via import via
 
-        super().__init__(parent, text=f"  {label}  ", padding=(16, 10))
+        super().__init__(parent, text=label, style="Card.TLabelframe", padding=(16, 8, 16, 16))
         self.via = via
         self.panel = panel
         self.channel, self.effects, self.no_color = via.ZONES[zone]
@@ -78,8 +79,8 @@ class ZoneEditor(ttk.LabelFrame):
         form_row(self, 2, "Brightness", self.brightness)
         self.speed = ValueScale(self, 0, 255, 128, percent_of_255, self._changed)
         form_row(self, 3, "Speed", self.speed)
-        self.note = ttk.Label(self, style="Small.TLabel", wraplength=300)
-        self.note.grid(row=4, column=0, columnspan=2, sticky="w", pady=(6, 0))
+        self.note = WrapLabel(self, style="Small.TLabel")
+        self.note.grid(row=4, column=0, columnspan=2, sticky="ew", pady=(6, 0))
         btns = ttk.Frame(self)
         btns.grid(row=5, column=0, columnspan=2, sticky="w", pady=(10, 0))
         ttk.Button(btns, text="Turn off", command=self.set_off).pack(side="left")
@@ -88,7 +89,7 @@ class ZoneEditor(ttk.LabelFrame):
         if isinstance(state, Exception):
             for w in (self.effect, self.brightness, self.speed, self.color):
                 (w.set_enabled(False) if hasattr(w, "set_enabled") else w.state(["disabled"]))
-            self.note.configure(text=f"Not available: {state}")
+            self._set_note(f"Not available: {state}")
             self._enabled = False
             return
         self._enabled = True
@@ -110,10 +111,16 @@ class ZoneEditor(ttk.LabelFrame):
 
     def _update_note(self):
         idx = self.effect.current()
-        if idx in self.no_color and idx != 0:
-            self.note.configure(text="This effect uses its own colors.")
+        self._set_note("This effect uses its own colors."
+                       if idx in self.no_color and idx != 0 else "")
+
+    def _set_note(self, text):
+        # Hidden when empty, so it doesn't leave a gap above the buttons.
+        self.note.configure(text=text)
+        if text:
+            self.note.grid()
         else:
-            self.note.configure(text="")
+            self.note.grid_remove()
 
     def _changed(self, *_):
         if not self._enabled:
